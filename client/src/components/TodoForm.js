@@ -22,7 +22,7 @@ export const TodoForm = ({ addTodo }) => {
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         className="todo-input"
-        placeholder="What is the task today?"
+        placeholder="What is the task?"
         required
       />
       <textarea
@@ -32,13 +32,14 @@ export const TodoForm = ({ addTodo }) => {
         placeholder="Optional description"
       />
       <input
-        type="date"
+        type="datetime-local"
         value={dueDate}
         onChange={(e) => setDueDate(e.target.value)}
         className="todo-input"
         required
-        min={new Date().toISOString().split("T")[0]}
+        min={new Date().toISOString().slice(0, 16)} // Ensure it doesn't allow past dates
       />
+
       <button type="submit" className="todo-btn">
         Add Task
       </button>

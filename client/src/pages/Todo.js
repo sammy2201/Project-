@@ -9,15 +9,20 @@ export const TodoWrapper = () => {
   const [sortOrder, setSortOrder] = useState("asc");
   const [titleSearch, setTitleSearch] = useState("");
   const [descSearch, setDescSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
 
   useEffect(() => {
-    fetchTodos();
-  }, []);
+    fetchTodos(currentPage);
+  }, [currentPage]);
 
-  const fetchTodos = async () => {
+  const fetchTodos = async (page = 1) => {
     try {
-      const res = await axios.get("http://localhost:3000/api/todo");
+      const res = await axios.get(
+        `http://localhost:3000/api/todo?page=${page}&limit=10`
+      );
       setTodos(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / 10)); // Calculate total pages
     } catch (error) {
       console.error("Error fetching todos", error);
     }
@@ -77,10 +82,11 @@ export const TodoWrapper = () => {
     );
   };
 
-  const editTask = async (title, id) => {
+  const editTask = async (title, description, id) => {
     try {
       const updated = await axios.put(`http://localhost:3000/api/todo/${id}`, {
         title,
+        description, // Pass the description too
       });
       setTodos((prev) =>
         prev.map((t) =>
@@ -114,6 +120,10 @@ export const TodoWrapper = () => {
     const dateB = new Date(b.dueDate);
     return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
   });
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
 
   return (
     <div className="TodoWrapper">
@@ -158,6 +168,22 @@ export const TodoWrapper = () => {
           )
         )
       )}
+
+      <div className="pagination">
+        <button
+          onClick={() => handlePageChange(currentPage - 1)}
+          disabled={currentPage === 1}>
+          Previous
+        </button>
+        <span>
+          Page {currentPage} of {totalPages}
+        </span>
+        <button
+          onClick={() => handlePageChange(currentPage + 1)}
+          disabled={currentPage === totalPages}>
+          Next
+        </button>
+      </div>
     </div>
   );
 };

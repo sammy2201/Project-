@@ -1,17 +1,20 @@
 @import url("https://fonts.googleapis.com/css2?family=Poppins&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap");
 
 * {
-  font-family: "Poppins", sans-serif;
+  font-family: "Montserrat", sans-serif;
   margin: 0;
   padding: 0;
   box-sizing: border-box;
 }
 
 body {
-  background: #8758ff;
+  background: #f2f2f2;
   display: flex;
   justify-content: center;
   align-items: center;
+  background-image: radial-gradient(circle, #e8e8e8 20%, transparent 20%);
+  background-size: 50px 50px; /* Adjust the size of the dots and spacing */
 }
 
 .App {
@@ -19,52 +22,129 @@ body {
 }
 
 h1 {
-  color: #fff;
+  color: #0f111a;
   margin-bottom: 0.5rem;
-  font-size: 1.75rem;
+  font-size: 2rem; /* Slightly larger font size for a more modern look */
+  font-family: "Inter", sans-serif;
+  text-transform: uppercase;
+  font-weight: 700;
+  letter-spacing: 2px;
+  opacity: 0;
+  transform: scale(0.8);
+  animation: pulseGlow 1.5s ease-out forwards, textPop 1s ease-out forwards;
+  padding-bottom: 2%;
+}
+
+/* Pulse effect combined with a glowing text shadow */
+@keyframes pulseGlow {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+    text-shadow: 0 0 10px rgba(255, 255, 255, 0.3),
+      0 0 30px rgba(255, 255, 255, 0.2);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.05);
+    text-shadow: 0 0 20px rgba(255, 255, 255, 0.6),
+      0 0 40px rgba(255, 255, 255, 0.3);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+    text-shadow: 0 0 15px rgba(255, 255, 255, 0.5),
+      0 0 25px rgba(255, 255, 255, 0.4);
+  }
+}
+
+/* Text pop effect for a subtle size increase */
+@keyframes textPop {
+  0% {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .TodoWrapper {
-  background: #1a1a40;
+  background: rgba(255, 255, 255, 0.1); /* semi-transparent white */
+  backdrop-filter: blur(10px); /* blur effect */
+  -webkit-backdrop-filter: blur(10px); /* Safari support */
   margin-top: 5rem;
   padding: 2rem;
-  border-radius: 5px;
+  border-radius: 15px;
+  box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
+/* Updated TodoForm for single-line layout */
 .TodoForm {
   width: 100%;
   margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: nowrap;
+  gap: 0.75rem;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
+  flex: 1;
 }
 
 .todo-input {
   outline: none;
   background: none;
-  border: 1px solid #8758ff;
+  border: 1px solid #00bfa5;
   padding: 0.5rem 1rem;
-  margin-top: 1rem;
-  margin-bottom: 2rem;
-  width: 300px;
-  color: #fff;
+  color: #4f6e8c;
+  border-radius: 4px;
+  flex: 1;
+  min-width: 150px;
 }
 
 .todo-input::placeholder {
-  color: #ffffff4d;
+  color: #4f6e8c;
+}
+
+.TodoForm textarea.todo-input {
+  resize: vertical;
+  height: 40px;
 }
 
 .todo-btn {
-  background: #8758ff;
-  color: #fff;
+  background: #2a4759;
+  color: #f2f2f2;
   border: none;
-  padding: 0.55rem;
+  padding: 0.55rem 1rem;
   cursor: pointer;
+  border-radius: 4px;
+  white-space: nowrap;
+}
+
+.TodoContainer {
+  display: flex;
+  width: 100%;
+  gap: 0.3rem;
+}
+
+.TodoDue {
+  font-size: 0.75rem;
+  width: 20%;
+  background: #2a4759;
+  color: #f2f2f2;
+  padding: 0.75rem 1rem;
+  border-radius: 5px;
+  margin-bottom: 1rem;
 }
 
 .Todo {
+  width: 80%;
   display: flex;
   justify-content: space-between;
-  align-items: center;
-  background: #8758ff;
-  color: #fff;
+  background: #2a4759;
+  color: #f2f2f2;
   padding: 0.75rem 1rem;
   border-radius: 5px;
   margin-bottom: 1rem;
@@ -75,7 +155,7 @@ h1 {
 }
 
 .incompleted {
-  color: #fff;
+  color: #f2f2f2;
   cursor: pointer;
 }
 
@@ -100,8 +180,8 @@ h1 {
 
 .search-input {
   background: none;
-  border: 1px solid #8758ff;
-  color: #fff;
+  border: 1px solid #4f6e8c;
+  color: #0f111a;
   padding: 0.5rem 1rem;
   width: 300px;
   outline: none;
@@ -110,16 +190,17 @@ h1 {
 }
 
 .search-input::placeholder {
-  color: #ffffff4d;
+  color: #4f6e8c;
 }
 
 .search-input:focus {
-  border-color: #c5aeff;
+  border-color: #000000;
+  color: #0f111a;
 }
 
 .sort-btn {
-  background: #8758ff;
-  color: #fff;
+  background: #2a4759;
+  color: #ffffff;
   border: none;
   padding: 0.5rem 1rem;
   border-radius: 4px;
@@ -129,10 +210,12 @@ h1 {
 }
 
 .sort-btn:hover {
-  background: #6a3ce1;
+  background: #dddddd;
+  color: #2a4759;
 }
+
 .todo-text {
-  text-align: left; /* Align text to the left */
+  text-align: left;
   display: flex;
   flex-direction: column;
 }
@@ -143,18 +226,41 @@ h1 {
   color: #ddd;
 }
 
-.completed {
-  color: #c5aeff;
-  text-decoration: line-through;
-  cursor: pointer;
-}
-
-.incompleted {
-  color: #fff;
-  cursor: pointer;
-}
-
 .todo-text p {
   margin: 0;
   padding: 0;
+}
+
+/* Pagination styles */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-top: 1rem;
+}
+
+.pagination button {
+  background: #2a4759;
+  color: #f2f2f2;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  margin: 0 0.5rem;
+  font-size: 1rem;
+}
+
+.pagination button:disabled {
+  background: #cccccc;
+  cursor: not-allowed;
+}
+
+.pagination button:hover:not(:disabled) {
+  background: #444c60;
+}
+
+.pagination span {
+  color: #0f111a;
+  font-size: 1rem;
+  margin: 0 1rem;
 }
