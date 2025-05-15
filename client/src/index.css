@@ -172,10 +172,22 @@ h1 {
 
 .controls {
   display: flex;
-  flex-direction: column;
+  flex-direction: column; /* keep column so inputs can stack below buttons */
   gap: 0.75rem;
   margin-bottom: 1.5rem;
   align-items: center;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+/* Container for top row buttons */
+.controls-buttons {
+  display: flex;
+  gap: 0.75rem;
+  justify-content: center;
+  width: 100%;
+  max-width: 500px;
+  flex-wrap: nowrap;
 }
 
 .search-input {
@@ -263,4 +275,27 @@ h1 {
   color: #0f111a;
   font-size: 1rem;
   margin: 0 1rem;
+}
+
+.icon-spacing {
+  margin-left: 8px;
+}
+
+.search-toggle-btn {
+  background: none;
+  border: 1px solid #4f6e8c;
+  border-radius: 4px;
+  padding: 0.5rem;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  color: #4f6e8c;
+}
+
+.search-toggle-btn:hover {
+  background: #4f6e8c;
+  color: #ffffff;
+}
+
+.search-icon {
+  font-size: 1.2rem;
 }

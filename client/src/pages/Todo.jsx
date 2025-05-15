@@ -1,0 +1,169 @@
+import React, { useState, useEffect } from "react";
+import { Todo } from "../components/Todo.jsx";
+import { TodoForm } from "../components/TodoForm.jsx";
+import { EditTodo } from "../components/EditTodo.jsx";
+import { TodoControls } from "../components/TodoControls";
+import { TodoPagination } from "../components/TodoPagination.jsx";
+import axios from "axios";
+
+export const TodoWrapper = () => {
+  const [todos, setTodos] = useState([]);
+  const [sortOrder, setSortOrder] = useState("asc");
+  const [titleSearch, setTitleSearch] = useState("");
+  const [descSearch, setDescSearch] = useState("");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+
+  useEffect(() => {
+    fetchTodos(currentPage);
+  }, [currentPage]);
+
+  const fetchTodos = async (page = 1) => {
+    try {
+      const res = await axios.get(
+        `http://localhost:3000/api/todo?page=${page}&limit=10`
+      );
+      setTodos(res.data.data);
+      setTotalPages(Math.ceil(res.data.total / 10)); // Calculate total pages
+    } catch (error) {
+      console.error("Error fetching todos", error);
+    }
+  };
+
+  const addTodo = async ({ title, dueDate, description }) => {
+    const now = new Date();
+    const userDate = new Date(dueDate);
+
+    if (userDate < now) {
+      alert("Due date has already passed. Please pick a future date.");
+      return;
+    }
+
+    try {
+      const res = await axios.post("http://localhost:3000/api/todo", {
+        title,
+        dueDate,
+        description,
+        completed: false,
+      });
+      setTodos((prev) => [...prev, res.data]);
+    } catch (error) {
+      console.error("Error adding todo", error.response?.data || error.message);
+    }
+  };
+
+  const deleteTodo = async (id) => {
+    try {
+      await axios.delete(`http://localhost:3000/api/todo/${id}`);
+      setTodos((prev) => prev.filter((todo) => todo._id !== id));
+    } catch (error) {
+      console.error(
+        "Error deleting todo",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const toggleComplete = async (id) => {
+    const todo = todos.find((t) => t._id === id);
+    if (!todo) return;
+
+    try {
+      const updated = await axios.put(`http://localhost:3000/api/todo/${id}`, {
+        completed: !todo.completed,
+      });
+      setTodos((prev) => prev.map((t) => (t._id === id ? updated.data : t)));
+    } catch (error) {
+      console.error("Error toggling complete", error);
+    }
+  };
+
+  const editTodo = (id) => {
+    setTodos((prev) =>
+      prev.map((t) => (t._id === id ? { ...t, isEditing: !t.isEditing } : t))
+    );
+  };
+
+  const editTask = async (title, description, id) => {
+    try {
+      const updated = await axios.put(`http://localhost:3000/api/todo/${id}`, {
+        title,
+        description, // Pass the description too
+      });
+      setTodos((prev) =>
+        prev.map((t) =>
+          t._id === id ? { ...updated.data, isEditing: false } : t
+        )
+      );
+    } catch (error) {
+      console.error(
+        "Error editing task",
+        error.response?.data || error.message
+      );
+    }
+  };
+
+  const toggleSortOrder = () => {
+    setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  };
+
+  const filteredTodos = todos.filter((todo) => {
+    const titleMatch = todo.title
+      .toLowerCase()
+      .includes(titleSearch.toLowerCase());
+    const descMatch = todo.description
+      ?.toLowerCase()
+      .includes(descSearch.toLowerCase());
+    return titleMatch && descMatch;
+  });
+
+  const sortedTodos = [...filteredTodos].sort((a, b) => {
+    const dateA = new Date(a.dueDate);
+    const dateB = new Date(b.dueDate);
+    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
+  });
+
+  const handlePageChange = (newPage) => {
+    setCurrentPage(newPage);
+  };
+
+  return (
+    <div className="TodoWrapper">
+      <h1>My ToDo List</h1>
+      <TodoForm addTodo={addTodo} />
+
+      <TodoControls
+        titleSearch={titleSearch}
+        setTitleSearch={setTitleSearch}
+        descSearch={descSearch}
+        setDescSearch={setDescSearch}
+        sortOrder={sortOrder}
+        toggleSortOrder={toggleSortOrder}
+      />
+
+      {sortedTodos.length === 0 ? (
+        <p>No tasks match your search.</p>
+      ) : (
+        sortedTodos.map((todo) =>
+          todo.isEditing ? (
+            <EditTodo key={todo._id} editTodo={editTask} task={todo} />
+          ) : (
+            <Todo
+              key={todo._id}
+              task={todo}
+              deleteTodo={() => deleteTodo(todo._id)}
+              editTodo={() => editTodo(todo._id)}
+              toggleComplete={() => toggleComplete(todo._id)}
+            />
+          )
+        )
+      )}
+
+      <TodoPagination
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={handlePageChange}
+      />
+    </div>
+  );
+};
