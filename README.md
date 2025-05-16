@@ -80,14 +80,16 @@ In server/todo-service/, create a .env file:
 
 Our Todo Service follows a clean and modular architecture based on MVC principle (Model-View-Controller), making the codebase organized, testable, and scalable.
 
-# Architecture Layers
+### Architecture Layers
 
 1. Model Layer (Mongoose)
+
    Defines the data schema for Todo items (title, description, due date, etc.)
 
    Used to interact with MongoDB
 
 2. Controller Layer
+
    Contains logic for handling requests and forming responses
 
    Example: getTodos, createTodo, updateTodo, deleteTodo, etc.
@@ -95,9 +97,11 @@ Our Todo Service follows a clean and modular architecture based on MVC principle
    Handles pagination, filtering, sorting, and error handling
 
 3. Routing Layer
+
    Maps HTTP routes to controller methods
 
    Keeps the app modular and separates logic from endpoint definitions
 
 4. Testing
+
    Unit tests written using Jest
