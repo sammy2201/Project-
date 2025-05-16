@@ -24,7 +24,7 @@ body {
 h1 {
   color: #0f111a;
   margin-bottom: 0.5rem;
-  font-size: 2rem; /* Slightly larger font size for a more modern look */
+  font-size: 2rem;
   font-family: "Inter", sans-serif;
   text-transform: uppercase;
   font-weight: 700;
@@ -35,7 +35,6 @@ h1 {
   padding-bottom: 2%;
 }
 
-/* Pulse effect combined with a glowing text shadow */
 @keyframes pulseGlow {
   0% {
     opacity: 0;
@@ -57,7 +56,6 @@ h1 {
   }
 }
 
-/* Text pop effect for a subtle size increase */
 @keyframes textPop {
   0% {
     opacity: 0;
@@ -72,7 +70,7 @@ h1 {
 .TodoWrapper {
   background: rgba(255, 255, 255, 0.1); /* semi-transparent white */
   backdrop-filter: blur(10px); /* blur effect */
-  -webkit-backdrop-filter: blur(10px); /* Safari support */
+  -webkit-backdrop-filter: blur(10px);
   margin-top: 5rem;
   padding: 2rem;
   border-radius: 15px;
@@ -80,7 +78,6 @@ h1 {
   border: 1px solid rgba(255, 255, 255, 0.18);
 }
 
-/* Updated TodoForm for single-line layout */
 .TodoForm {
   width: 100%;
   margin-bottom: 1rem;
@@ -152,17 +149,6 @@ h1 {
 
 .fa-trash {
   margin-left: 0.75rem;
-}
-
-.incompleted {
-  color: #f2f2f2;
-  cursor: pointer;
-}
-
-.completed {
-  color: #c5aeff;
-  text-decoration: line-through;
-  cursor: pointer;
 }
 
 .edit-icon,
@@ -243,7 +229,6 @@ h1 {
   padding: 0;
 }
 
-/* Pagination styles */
 .pagination {
   display: flex;
   justify-content: center;

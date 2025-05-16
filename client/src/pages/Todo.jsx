@@ -47,8 +47,6 @@ export const TodoWrapper = () => {
     }
   };
 
-  // Other handlers (addTodo, deleteTodo, toggleComplete, editTodo, editTask) stay the same
-
   const addTodo = async ({ title, dueDate, description }) => {
     const now = new Date();
     const userDate = new Date(dueDate);
@@ -63,7 +61,6 @@ export const TodoWrapper = () => {
         title,
         dueDate,
         description,
-        completed: false,
       });
       setTodos((prev) => [...prev, res.data]);
     } catch (error) {
@@ -80,20 +77,6 @@ export const TodoWrapper = () => {
         "Error deleting todo",
         error.response?.data || error.message
       );
-    }
-  };
-
-  const toggleComplete = async (id) => {
-    const todo = todos.find((t) => t._id === id);
-    if (!todo) return;
-
-    try {
-      const updated = await axios.put(`http://localhost:3000/api/todo/${id}`, {
-        completed: !todo.completed,
-      });
-      setTodos((prev) => prev.map((t) => (t._id === id ? updated.data : t)));
-    } catch (error) {
-      console.error("Error toggling complete", error);
     }
   };
 
@@ -159,7 +142,6 @@ export const TodoWrapper = () => {
               task={todo}
               deleteTodo={() => deleteTodo(todo._id)}
               editTodo={() => editTodo(todo._id)}
-              toggleComplete={() => toggleComplete(todo._id)}
             />
           )
         )

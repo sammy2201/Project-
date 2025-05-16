@@ -6,7 +6,7 @@ jest.mock("../models/todo");
 
 describe("todoController", () => {
   let req, res;
-  // Create new fake request and response objects before each test
+  // New fake request and response objects before each test
   beforeEach(() => {
     req = {};
     res = {
@@ -16,21 +16,8 @@ describe("todoController", () => {
     jest.clearAllMocks();
   });
 
-  //test for getting Todos
+  //Test for getting Todos
   describe("getTodos", () => {
-    let req, res;
-
-    beforeEach(() => {
-      req = { query: {} };
-      res = {
-        json: jest.fn(),
-        status: jest.fn().mockReturnThis(),
-      };
-      // Reset mocks on Todo methods
-      Todo.find = jest.fn();
-      Todo.countDocuments = jest.fn();
-    });
-
     it("should fetch todos with default params", async () => {
       req.query = {}; // no filters
 
@@ -121,7 +108,9 @@ describe("todoController", () => {
       await todoController.getTodo(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Not found" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Todo item with this ID was not found",
+      });
     });
 
     it("should handle errors", async () => {
@@ -202,7 +191,9 @@ describe("todoController", () => {
       await todoController.updateTodo(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Not found" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Todo item with this ID was not found",
+      });
     });
 
     it("should handle errors", async () => {
@@ -240,7 +231,9 @@ describe("todoController", () => {
       await todoController.deleteTodo(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: "Not found" });
+      expect(res.json).toHaveBeenCalledWith({
+        message: "Todo item with this ID was not found",
+      });
     });
 
     it("should handle errors", async () => {

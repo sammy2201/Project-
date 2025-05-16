@@ -2,7 +2,7 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faPenToSquare, faTrash } from "@fortawesome/free-solid-svg-icons";
 
-export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
+export const Todo = ({ task, deleteTodo, editTodo }) => {
   return (
     <div className="TodoContainer">
       <div className="TodoDue">
@@ -25,8 +25,8 @@ export const Todo = ({ task, deleteTodo, editTodo, toggleComplete }) => {
       </div>
 
       <div className="Todo">
-        <div onClick={toggleComplete} className="todo-text">
-          <p className={task.completed ? "completed" : "incompleted"}>
+        <div className="todo-text">
+          <p>
             <strong>{task.title}</strong>
           </p>
           {task.description && (

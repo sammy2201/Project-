@@ -1,30 +1,13 @@
 const Todo = require("../models/todo");
 
-//   try {
-//     const {
-//       q,
-//       sort = "dueDate",
-//       order = "asc",
-//       page = 1,
-//       limit = 10,
-//     } = req.query;
+const handleServerError = (res, err, action = "processing your request") => {
+  console.error(`Error ${action}:`, err.message);
+  res.status(500).json({ message: "Something went wrong!" });
+};
 
-//     const query = q ? { title: { $regex: q, $options: "i" } } : {};
+const handleNotFound = (res, resource = "Todo item") =>
+  res.status(404).json({ message: `${resource} with this ID was not found` });
 
-//     const todos = await Todo.find(query)
-//       .sort({ [sort]: order === "asc" ? 1 : -1 })
-//       .skip((page - 1) * limit)
-//       .limit(Number(limit));
-
-//     const total = await Todo.countDocuments(query);
-
-//     res.json({ data: todos, total });
-//   } catch (err) {
-//     console.error("Error fetching todos:", err.message);
-//     res.status(500).json({ message: "Something went wrong!" });
-//   }
-// };
-// Assuming you have a Todo model imported already
 exports.getTodos = async (req, res) => {
   try {
     const {
@@ -36,14 +19,12 @@ exports.getTodos = async (req, res) => {
       limit = 10,
     } = req.query;
 
-    // MongoDB query with regex for case-insensitive search
     const query = {
       title: { $regex: title, $options: "i" },
       description: { $regex: description, $options: "i" },
     };
 
     const skip = (page - 1) * limit;
-    const sortOrder = order === "asc" ? 1 : -1;
 
     const todos = await Todo.find(query)
       .sort({ [sort]: order === "asc" ? 1 : -1 })
@@ -54,19 +35,17 @@ exports.getTodos = async (req, res) => {
 
     res.json({ data: todos, total });
   } catch (err) {
-    console.error("Error fetching todos:", err.message);
-    res.status(500).json({ message: "Something went wrong!" });
+    handleServerError(res, err, "fetching todos");
   }
 };
 
 exports.getTodo = async (req, res) => {
   try {
     const todo = await Todo.findById(req.params.id);
-    if (!todo) return res.status(404).json({ message: "Not found" });
+    if (!todo) return handleNotFound(res);
     res.json(todo);
   } catch (err) {
-    console.error("Error fetching todo:", err.message);
-    res.status(500).json({ message: "Something went wrong!" });
+    handleServerError(res, err, "fetching todo");
   }
 };
 
@@ -86,21 +65,19 @@ exports.updateTodo = async (req, res) => {
     const todo = await Todo.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
     });
-    if (!todo) return res.status(404).json({ message: "Not found" });
+    if (!todo) return handleNotFound(res);
     res.json(todo);
   } catch (err) {
-    console.error("Error updating todo:", err.message);
-    res.status(500).json({ message: "Something went wrong!" });
+    handleServerError(res, err, "updating todo");
   }
 };
 
 exports.deleteTodo = async (req, res) => {
   try {
     const todo = await Todo.findByIdAndDelete(req.params.id);
-    if (!todo) return res.status(404).json({ message: "Not found" });
+    if (!todo) return handleNotFound(res);
     res.json({ message: "Deleted" });
   } catch (err) {
-    console.error("Error deleting todo:", err.message);
-    res.status(500).json({ message: "Something went wrong!" });
+    handleServerError(res, err, "deleting todo");
   }
 };
