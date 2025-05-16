@@ -29,9 +29,11 @@ Ensure you have the following installed on your system:
 1. First Clone the repository
 2. Install dependencies using npm or another package manager
 3. Go to client folder
-   `cd client`
-   `npm init`
-   `npm install`
+   ```bash
+   cd client
+   npm init
+   npm install
+   ```
 4. Go to todo-service in server folder in new terminal
    `cd server/todo-service`
    `npm init`
