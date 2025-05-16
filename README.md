@@ -78,7 +78,7 @@ In server/todo-service/, create a .env file:
 
 ## Implementation Architecture
 
-Our Todo Service follows a clean and modular architecture based on MVC principle (Model-View-Controller), making the codebase organized, testable, and scalable.
+This Todo Backend Service follows a clean and modular architecture based on MVC principle (Model-View-Controller), making the codebase organized, testable, and scalable.
 
 ### Architecture Layers
 
