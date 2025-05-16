@@ -3,6 +3,7 @@ const cors = require("cors");
 const todoRoutes = require("./routes/todo.routes");
 const connectDB = require("./models/index");
 const { swaggerUi, specs } = require("./docs/swagger"); //
+const seedTodos = require("./seed.todos");
 
 const app = express();
 
@@ -27,6 +28,15 @@ app.use((err, req, res, next) => {
   res.status(500).json({ message: "Something went wrong!" });
 });
 
-connectDB();
+async function startServer() {
+  try {
+    await connectDB();
+    await seedTodos();
+  } catch (err) {
+    console.error("Failed to start server:", err);
+  }
+}
+
+startServer();
 
 module.exports = app;
