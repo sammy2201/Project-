@@ -54,7 +54,9 @@ Once the server is running, access interactive API documentation at:
 ## Environment Variables
 
 In server/todo-service/, create a .env file:
+
 `PORT=3000`
+
 `MONGO_URI=provide your connection URL`
 
 ## Tests
@@ -63,4 +65,9 @@ In server/todo-service/, create a .env file:
 
    ```bash
    cd server/todo-service
+   ```
+
+2. Now run the following command
+   ```bash
+   npm test
    ```
