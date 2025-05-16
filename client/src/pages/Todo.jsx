@@ -2,34 +2,52 @@ import React, { useState, useEffect } from "react";
 import { Todo } from "../components/Todo.jsx";
 import { TodoForm } from "../components/TodoForm.jsx";
 import { EditTodo } from "../components/EditTodo.jsx";
-import { TodoControls } from "../components/TodoControls";
+import { TodoControls } from "../components/TodoControls.jsx";
 import { TodoPagination } from "../components/TodoPagination.jsx";
 import axios from "axios";
-//
 
 export const TodoWrapper = () => {
   const [todos, setTodos] = useState([]);
-  const [sortOrder, setSortOrder] = useState("asc");
+  const [sortOrder, setSortOrder] = useState("asc"); // 'asc' or 'desc'
   const [titleSearch, setTitleSearch] = useState("");
   const [descSearch, setDescSearch] = useState("");
   const [currentPage, setCurrentPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+  const [loading, setLoading] = useState(false);
 
+  // Fetch todos whenever these change
   useEffect(() => {
-    fetchTodos(currentPage);
-  }, [currentPage]);
+    fetchTodos(currentPage, sortOrder, titleSearch, descSearch);
+  }, [currentPage, sortOrder, titleSearch, descSearch]);
 
-  const fetchTodos = async (page = 1) => {
+  const fetchTodos = async (
+    page = 1,
+    order = "asc",
+    title = "",
+    description = ""
+  ) => {
+    setLoading(true);
     try {
-      const res = await axios.get(
-        `http://localhost:3000/api/todo?page=${page}&limit=10`
-      );
+      const res = await axios.get(`http://localhost:3000/api/todo`, {
+        params: {
+          page,
+          limit: 10,
+          sort: "dueDate",
+          order,
+          title,
+          description,
+        },
+      });
       setTodos(res.data.data);
-      setTotalPages(Math.ceil(res.data.total / 10)); // Calculate total pages
+      setTotalPages(Math.ceil(res.data.total / 10));
     } catch (error) {
       console.error("Error fetching todos", error);
+    } finally {
+      setLoading(false);
     }
   };
+
+  // Other handlers (addTodo, deleteTodo, toggleComplete, editTodo, editTask) stay the same
 
   const addTodo = async ({ title, dueDate, description }) => {
     const now = new Date();
@@ -89,7 +107,7 @@ export const TodoWrapper = () => {
     try {
       const updated = await axios.put(`http://localhost:3000/api/todo/${id}`, {
         title,
-        description, // Pass the description too
+        description,
       });
       setTodos((prev) =>
         prev.map((t) =>
@@ -106,23 +124,8 @@ export const TodoWrapper = () => {
 
   const toggleSortOrder = () => {
     setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+    setCurrentPage(1); // reset page on sort change
   };
-
-  const filteredTodos = todos.filter((todo) => {
-    const titleMatch = todo.title
-      .toLowerCase()
-      .includes(titleSearch.toLowerCase());
-    const descMatch = todo.description
-      ?.toLowerCase()
-      .includes(descSearch.toLowerCase());
-    return titleMatch && descMatch;
-  });
-
-  const sortedTodos = [...filteredTodos].sort((a, b) => {
-    const dateA = new Date(a.dueDate);
-    const dateB = new Date(b.dueDate);
-    return sortOrder === "asc" ? dateA - dateB : dateB - dateA;
-  });
 
   const handlePageChange = (newPage) => {
     setCurrentPage(newPage);
@@ -142,10 +145,12 @@ export const TodoWrapper = () => {
         toggleSortOrder={toggleSortOrder}
       />
 
-      {sortedTodos.length === 0 ? (
+      {loading ? (
+        <p>Loading todos...</p>
+      ) : todos.length === 0 ? (
         <p>No tasks match your search.</p>
       ) : (
-        sortedTodos.map((todo) =>
+        todos.map((todo) =>
           todo.isEditing ? (
             <EditTodo key={todo._id} editTodo={editTask} task={todo} />
           ) : (

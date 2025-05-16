@@ -1,14 +1,57 @@
 const Todo = require("../models/todo");
 
+//   try {
+//     const {
+//       q,
+//       sort = "dueDate",
+//       order = "asc",
+//       page = 1,
+//       limit = 10,
+//     } = req.query;
+
+//     const query = q ? { title: { $regex: q, $options: "i" } } : {};
+
+//     const todos = await Todo.find(query)
+//       .sort({ [sort]: order === "asc" ? 1 : -1 })
+//       .skip((page - 1) * limit)
+//       .limit(Number(limit));
+
+//     const total = await Todo.countDocuments(query);
+
+//     res.json({ data: todos, total });
+//   } catch (err) {
+//     console.error("Error fetching todos:", err.message);
+//     res.status(500).json({ message: "Something went wrong!" });
+//   }
+// };
+// Assuming you have a Todo model imported already
 exports.getTodos = async (req, res) => {
   try {
-    const { q, sort = "dueDate", page = 1, limit = 10 } = req.query;
-    const query = q ? { title: { $regex: q, $options: "i" } } : {};
+    const {
+      title = "",
+      description = "",
+      sort = "dueDate",
+      order = "asc",
+      page = 1,
+      limit = 10,
+    } = req.query;
+
+    // MongoDB query with regex for case-insensitive search
+    const query = {
+      title: { $regex: title, $options: "i" },
+      description: { $regex: description, $options: "i" },
+    };
+
+    const skip = (page - 1) * limit;
+    const sortOrder = order === "asc" ? 1 : -1;
+
     const todos = await Todo.find(query)
-      .sort({ [sort]: 1 })
-      .skip((page - 1) * limit)
+      .sort({ [sort]: order === "asc" ? 1 : -1 })
+      .skip(skip)
       .limit(Number(limit));
+
     const total = await Todo.countDocuments(query);
+
     res.json({ data: todos, total });
   } catch (err) {
     console.error("Error fetching todos:", err.message);

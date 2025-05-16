@@ -2,12 +2,16 @@ const express = require("express");
 const cors = require("cors");
 const todoRoutes = require("./routes/todo.routes");
 const connectDB = require("./models/index");
+const { swaggerUi, specs } = require("./docs/swagger"); //
 
 const app = express();
 
 // Middleware
 app.use(cors());
 app.use(express.json());
+
+// Swagger API Docs
+app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(specs)); //
 
 // Routes
 app.use("/api/todo", todoRoutes);
