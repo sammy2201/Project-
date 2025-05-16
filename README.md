@@ -1,0 +1,58 @@
+# Fullstack Todo App (Monorepo)
+
+A full-featured Todo List application built with the MERN stack. The app supports CRUD operations, pagination, sorting, and frontend-based search. The project is organized in a monorepo with separate folders for the client and server.
+
+## Features
+
+Below features have been implemented in this project.
+
+1. Add / Edit / Delete todo items
+2. Search by title & description
+3. Sort by due date (asc/desc)
+4. Paginated
+5. Prevent adding past-due dates
+6. API documentation via Swagger
+7. Prepopulated data
+
+## Prerequisites:
+
+Ensure you have the following installed on your system:
+
+1. Node.js
+2. npm
+3. Git
+4. React.js
+5. MongoDB
+
+## Installation:
+
+1. First Clone the repository
+2. Install dependencies using npm or another package manager
+3. Go to client folder
+   `cd client`
+   `npm init`
+   `npm install`
+4. Go to todo-service in server folder in new terminal
+   `cd server/todo-service`
+   `npm init`
+   `npm install`
+
+## Run:
+
+1. To run the client use below comand by staying in client folder:
+   `npm start`
+2. To run the server use below comand by staying in src folder:
+   `cd server/todo-service/src`
+   and then run
+   `node server.js`
+
+## API Docs (Swagger)
+
+Once the server is running, access interactive API documentation at:
+`http://localhost:3000/api-docs`
+
+## Environment Variables
+
+In server/todo-service/, create a .env file:
+`PORT=3000`
+`MONGO_URI=provide your connection URL`

@@ -46,7 +46,7 @@
  *       example:
  *         title: Walk the dog
  *         description: Evening walk in the park
- *         dueDate: 2025-05-21
+ *         dueDate: 2025-05-15T18:00:00.000Z
  *
  */
 
@@ -64,32 +64,41 @@ const {
  * @swagger
  * /api/todo:
  *   get:
- *     summary: This API endpoint is responsible for retrieving a list of todos from the database with support for search, sorting, and pagination. It accepts query parameters such as `q` for a keyword search on the title, `sort` to determine the field by which the results should be ordered (defaulting to `"dueDate"`), and `page` and `limit` to control pagination. If a search query `q` is provided, it performs a case-insensitive regex match on the `title` field. It then sorts the results based on the specified field, skips the appropriate number of documents based on the current page, and limits the number of returned results according to the specified limit. In addition to fetching the current page of todos, it also calculates the total number of documents matching the search criteria to help the client manage pagination on the frontend. Finally, it sends a response containing the paginated todos and the total count. If any error occurs during this process, it logs the error and responds with a 500 status code along with a generic error message.
+ *     summary: Get a paginated list of todos with optional filtering and sorting
+ *     description: This API gets a list of todos from the database. You can search todos by matching words in the title and description, without worrying about uppercase or lowercase letters. You can sort the list by "dueDate", and choose if the list is shown in ascending or descending order. The results are split into pages, so you can ask for a specific page and how many todos to show per page.
  *     tags: [Todos]
  *     parameters:
  *       - in: query
- *         name: q
+ *         name: title
  *         schema:
  *           type: string
- *         description: Filter by title (optional)
+ *       - in: query
+ *         name: description
+ *         schema:
+ *           type: string
  *       - in: query
  *         name: sort
  *         schema:
  *           type: string
- *         description: Sort by a field (e.g., "dueDate")
+ *           default: dueDate
+ *       - in: query
+ *         name: order
+ *         schema:
+ *           type: string
+ *           enum: [asc, desc]
  *       - in: query
  *         name: page
  *         schema:
  *           type: integer
- *         description: Page number (default 1)
+ *           default: 1
  *       - in: query
  *         name: limit
  *         schema:
  *           type: integer
- *         description: Items per page (default 10)
+ *           default: 10
  *     responses:
  *       200:
- *         description: List of todos
+ *         description: List of todos with pagination info
  *         content:
  *           application/json:
  *             schema:
@@ -101,7 +110,9 @@ const {
  *                     $ref: '#/components/schemas/Todo'
  *                 total:
  *                   type: integer
+ *                   description: Total number of todos matching the filters
  */
+
 router.route("/").get(getTodos);
 
 /**
@@ -109,6 +120,7 @@ router.route("/").get(getTodos);
  * /api/todo:
  *   post:
  *     summary: Create a new todo
+ *     description: Create a new todo item by providing the title, description, and due date. The request body must include these details in JSON format. Returns the created todo object.
  *     tags: [Todos]
  *     requestBody:
  *       required: true
@@ -123,14 +135,20 @@ router.route("/").get(getTodos);
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Todo'
+ *       400:
+ *         description: Invalid input data
+ *       500:
+ *         description: Internal server error
  */
+
 router.route("/").post(createTodo);
 
 /**
  * @swagger
  * /api/todo/{id}:
  *   get:
- *     summary: Get a todo by ID
+ *     summary: Retrieve a todo by its ID
+ *     description: Fetch a single todo item from the database using its unique ID. Returns the todo details if found.
  *     tags: [Todos]
  *     parameters:
  *       - in: path
@@ -138,16 +156,18 @@ router.route("/").post(createTodo);
  *         required: true
  *         schema:
  *           type: string
- *         description: The ID of the todo
+ *         description: Unique identifier of the todo
  *     responses:
  *       200:
- *         description: A single todo
+ *         description: Todo retrieved successfully
  *         content:
  *           application/json:
  *             schema:
  *               $ref: '#/components/schemas/Todo'
  *       404:
- *         description: Todo not found
+ *         description: Todo not found with the given ID
+ *       500:
+ *         description: Internal server error
  */
 router.route("/:id").get(getTodo);
 
@@ -155,7 +175,8 @@ router.route("/:id").get(getTodo);
  * @swagger
  * /api/todo/{id}:
  *   put:
- *     summary: Update a todo
+ *     summary: Update an existing todo by ID
+ *     description: Update the details of a todo item identified by its unique ID. Requires the updated todo data in the request body.
  *     tags: [Todos]
  *     parameters:
  *       - in: path
@@ -163,7 +184,7 @@ router.route("/:id").get(getTodo);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the todo to update
+ *         description: Unique ID of the todo to update
  *     requestBody:
  *       required: true
  *       content:
@@ -178,15 +199,17 @@ router.route("/:id").get(getTodo);
  *             schema:
  *               $ref: '#/components/schemas/Todo'
  *       404:
- *         description: Todo not found
+ *         description: Todo not found with the given ID
+ *       500:
+ *         description: Internal server error
  */
 router.route("/:id").put(updateTodo);
-
 /**
  * @swagger
  * /api/todo/{id}:
  *   delete:
- *     summary: Delete a todo
+ *     summary: Delete a todo by ID
+ *     description: Removes the todo item identified by the given ID from the database.
  *     tags: [Todos]
  *     parameters:
  *       - in: path
@@ -194,10 +217,10 @@ router.route("/:id").put(updateTodo);
  *         required: true
  *         schema:
  *           type: string
- *         description: ID of the todo to delete
+ *         description: Unique ID of the todo to delete
  *     responses:
  *       200:
- *         description: Todo deleted
+ *         description: Todo deleted successfully
  *         content:
  *           application/json:
  *             schema:
@@ -207,8 +230,9 @@ router.route("/:id").put(updateTodo);
  *                   type: string
  *                   example: Deleted
  *       404:
- *         description: Todo not found
+ *         description: Todo not found with the given ID
+ *       500:
+ *         description: Internal server error
  */
 router.route("/:id").delete(deleteTodo);
-
 module.exports = router;
