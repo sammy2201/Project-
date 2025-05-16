@@ -35,9 +35,11 @@ Ensure you have the following installed on your system:
    npm install
    ```
 4. Go to todo-service in server folder in new terminal
-   `cd server/todo-service`
-   `npm init`
-   `npm install`
+   ```bash
+   cd server/todo-service
+   npm init
+   npm install
+   ```
 
 ## Run:
 
