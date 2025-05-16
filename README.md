@@ -56,3 +56,11 @@ Once the server is running, access interactive API documentation at:
 In server/todo-service/, create a .env file:
 `PORT=3000`
 `MONGO_URI=provide your connection URL`
+
+## Tests
+
+1. To run backend tests with Jest, navigate to the server directory:
+
+   ```bash
+   cd server/todo-service
+   ```

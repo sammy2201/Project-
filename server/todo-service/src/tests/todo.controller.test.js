@@ -18,42 +18,76 @@ describe("todoController", () => {
 
   //test for getting Todos
   describe("getTodos", () => {
-    it("should fetch todos with default params", async () => {
-      req.query = {};
-      const todos = [{ title: "Test Todo" }];
-      Todo.find.mockReturnValue({
-        sort: jest.fn().mockReturnThis(),
-        skip: jest.fn().mockReturnThis(),
-        limit: jest.fn().mockResolvedValue(todos),
-      });
-      Todo.countDocuments.mockResolvedValue(1);
+    let req, res;
 
-      await todoController.getTodos(req, res);
-
-      expect(Todo.find).toHaveBeenCalledWith({});
-      expect(res.json).toHaveBeenCalledWith({ data: todos, total: 1 });
+    beforeEach(() => {
+      req = { query: {} };
+      res = {
+        json: jest.fn(),
+        status: jest.fn().mockReturnThis(),
+      };
+      // Reset mocks on Todo methods
+      Todo.find = jest.fn();
+      Todo.countDocuments = jest.fn();
     });
 
-    it("should apply search query and sorting", async () => {
-      req.query = { q: "test", sort: "title", page: "2", limit: "5" };
-      const todos = [{ title: "Test Todo" }];
+    it("should fetch todos with default params", async () => {
+      req.query = {}; // no filters
+
+      const todos = [{ title: "Test Todo", description: "desc" }];
+
+      // Mock chained query builder methods
       Todo.find.mockReturnValue({
         sort: jest.fn().mockReturnThis(),
         skip: jest.fn().mockReturnThis(),
         limit: jest.fn().mockResolvedValue(todos),
       });
+
       Todo.countDocuments.mockResolvedValue(1);
 
       await todoController.getTodos(req, res);
 
       expect(Todo.find).toHaveBeenCalledWith({
-        title: { $regex: "test", $options: "i" },
+        title: { $regex: "", $options: "i" },
+        description: { $regex: "", $options: "i" },
       });
+
+      expect(res.json).toHaveBeenCalledWith({ data: todos, total: 1 });
+    });
+
+    it("should apply title and description search query and sorting", async () => {
+      req.query = {
+        title: "task",
+        description: "work",
+        sort: "title",
+        order: "desc",
+        page: "2",
+        limit: "5",
+      };
+
+      const todos = [{ title: "Task Todo", description: "work desc" }];
+
+      Todo.find.mockReturnValue({
+        sort: jest.fn().mockReturnThis(),
+        skip: jest.fn().mockReturnThis(),
+        limit: jest.fn().mockResolvedValue(todos),
+      });
+
+      Todo.countDocuments.mockResolvedValue(1);
+
+      await todoController.getTodos(req, res);
+
+      expect(Todo.find).toHaveBeenCalledWith({
+        title: { $regex: "task", $options: "i" },
+        description: { $regex: "work", $options: "i" },
+      });
+
       expect(res.json).toHaveBeenCalledWith({ data: todos, total: 1 });
     });
 
     it("should handle errors", async () => {
       req.query = {};
+
       Todo.find.mockImplementation(() => {
         throw new Error("fail");
       });
